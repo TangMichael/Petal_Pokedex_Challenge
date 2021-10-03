@@ -1,19 +1,22 @@
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import "./App.css";
-import PokemonDetails from "./components/PokemonDetails";
-import PokemonList from "./components/PokemonList";
+import PokemonDetails from "./components/PokemonDetail/PokemonDetails";
+import PokemonHeader from "./components/PokemonHeader/PokemonHeader";
+import PokemonList from "./components/PokemonList/PokemonList";
 
 function App() {
   return (
     <BrowserRouter>
+      <PokemonHeader />
       <Switch>
         <Route path="/pokemon/:name">
           <PokemonDetails />
         </Route>
+        <Route path="/:page">
+          <PokemonList />
+        </Route>
         <Route path="/">
-          <div className="App">
-            <PokemonList />
-          </div>
+          <PokemonList />
         </Route>
       </Switch>
     </BrowserRouter>

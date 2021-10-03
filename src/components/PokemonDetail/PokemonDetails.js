@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import PokemonEvolution from "./PokemonEvolution";
+
+import PokemonEvolution from "../PokemonEvolution/PokemonEvolution";
+import "./PokemonDetails.scss";
+import { properties } from "../../properties";
+
 const PokemonDetails = ({ pokemonDetails }) => {
   const [pokemon, setPokemon] = useState(pokemonDetails);
   const params = useParams();
@@ -9,7 +13,7 @@ const PokemonDetails = ({ pokemonDetails }) => {
   useEffect(() => {
     async function getPokemonDetails() {
       // create service for this api call
-      await fetch(`https://pokeapi.co/api/v2/pokemon/${params.name}`)
+      await fetch(`${properties.API}/pokemon/${params.name}`)
         .then((response) => response.json())
         .then((data) => {
           setPokemon(data);
@@ -26,17 +30,21 @@ const PokemonDetails = ({ pokemonDetails }) => {
   }
 
   return (
-    <div>
+    <div className="pokemon-details-container">
       {pokemon && (
-        <div>
+        <div className="pokemon-details-content">
           {getPokemonImage()}
-          <p>{pokemon.name}</p>
-          {"pokemon types: "}
-          {pokemon.types.map((type) => (
-            <p>{type.type.name}</p>
-          ))}
-          <p>{pokemon.id}</p>
-          <PokemonEvolution name={pokemon.name} />
+          <div className="pokemon-information">
+            <p>Id: {pokemon.id}</p>
+            <span>Name: {pokemon.name}</span>
+            <p>
+              {"Pokemon type(s): "}
+              {pokemon.types.map((type) => (
+                <span> {type.type.name + " "}</span>
+              ))}
+            </p>
+            <PokemonEvolution name={pokemon.name} />
+          </div>
         </div>
       )}
     </div>

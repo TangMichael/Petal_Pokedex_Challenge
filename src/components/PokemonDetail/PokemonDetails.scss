@@ -1,0 +1,20 @@
+.pokemon-details-container {
+  display: flex;
+  justify-content: center;
+  padding: 30px;
+
+  .pokemon-details-content {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .pokemon-information {
+    font-size: 20px;
+    margin-left: 20px;
+  }
+
+  span {
+    text-transform: capitalize;
+  }
+}

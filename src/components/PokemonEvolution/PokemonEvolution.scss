@@ -1,0 +1,7 @@
+.pokemon-evolution-container {
+  display: flex;
+
+  &-span:hover {
+    text-decoration: underline;
+  }
+}

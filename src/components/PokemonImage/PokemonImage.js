@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
+import { properties } from "../../properties";
 
-const PokemonImage = ({ name }) => {
+import "./PokemonImage.scss";
+
+const PokemonImage = ({ name, extraStyle }) => {
   const [pokemon, setPokemon] = useState();
   const history = useHistory();
 
   useEffect(() => {
     async function getPokemon() {
-      await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`)
+      await fetch(`${properties.API}/pokemon/${name}`)
         .then((response) => response.json())
         .then((data) => {
           setPokemon(data);
@@ -20,7 +23,14 @@ const PokemonImage = ({ name }) => {
 
   function getPokemonImage() {
     const pokemonImage = pokemon.sprites.other;
-    return <img src={pokemonImage["official-artwork"].front_default} alt="" />;
+    return (
+      <img
+        src={pokemonImage["official-artwork"].front_default}
+        alt=""
+        width="300px"
+        height="300px"
+      />
+    );
   }
 
   function goToPokemonDetails() {
@@ -30,9 +40,14 @@ const PokemonImage = ({ name }) => {
   return (
     <div onClick={goToPokemonDetails}>
       {pokemon && (
-        <div>
+        <div
+          className="pokemon-image"
+          style={{
+            ...extraStyle,
+          }}
+        >
           {getPokemonImage()}
-          <p>{pokemon.name}</p>
+          <span>{pokemon.name}</span>
         </div>
       )}
     </div>

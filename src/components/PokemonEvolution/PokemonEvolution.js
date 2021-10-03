@@ -1,5 +1,9 @@
 import { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
+import { properties } from "../../properties";
+
+import "./PokemonEvolution.scss";
+import PokemonImage from "../PokemonImage/PokemonImage";
 
 const PokemonEvolution = ({ name }) => {
   const [pokemonEvolution, setPokemonEvolution] = useState([]);
@@ -22,7 +26,7 @@ const PokemonEvolution = ({ name }) => {
   useEffect(() => {
     async function getPokemonEvolutionUrl() {
       // get evolution chain url
-      await fetch(`https://pokeapi.co/api/v2/pokemon-species/${name}`)
+      await fetch(`${properties.API}/pokemon-species/${name}`)
         .then((response) => response.json())
         .then(async (data) => {
           await fetch(`${data.evolution_chain.url}`)
@@ -42,9 +46,29 @@ const PokemonEvolution = ({ name }) => {
 
   return (
     <div>
-      {pokemonEvolution.map((evolutionName) => (
-        <p onClick={() => goToPokemonDetails(evolutionName)}>{evolutionName}</p>
-      ))}
+      <p>Evolution line: </p>
+      <div className="pokemon-evolution-container">
+        {pokemonEvolution.map((evolutionName) => (
+          <span>
+            {name === evolutionName ? (
+              <PokemonImage
+                name={evolutionName}
+                extraStyle={{ cursor: "default" }}
+              />
+            ) : (
+              <span
+                onClick={() => goToPokemonDetails(evolutionName)}
+                className="pokemon-evolution-container-span"
+              >
+                <PokemonImage
+                  name={evolutionName}
+                  extraStyle={{ fontWeight: "normal" }}
+                />
+              </span>
+            )}
+          </span>
+        ))}
+      </div>
     </div>
   );
 };

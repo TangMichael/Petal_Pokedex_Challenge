@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import PokemonImage from "./PokemonImage";
+import { useHistory, useParams } from "react-router";
+
 import Box from "@mui/material/Box";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
@@ -8,11 +9,17 @@ import Select from "@mui/material/Select";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 
+import PokemonImage from "../PokemonImage/PokemonImage";
+import "./PokemonList.scss";
+import { properties } from "../../properties";
+
 const PokemonList = () => {
+  const { page } = useParams();
+  const history = useHistory();
   const [pokemonList, setPokemonList] = useState([{}]);
-  const [displayCount, setDisplayCount] = useState();
+  const [pageAmount, setPageAmount] = useState();
   const [qtyDisplay, setQtyDisplay] = useState(20);
-  const [displayOffset, setDisplayOffset] = useState(0);
+  const [pageSelected, setPageSelected] = useState(page || 1);
 
   const handleChange = (event) => {
     setQtyDisplay(event.target.value);
@@ -20,38 +27,31 @@ const PokemonList = () => {
 
   useEffect(() => {
     // fetch api call, uncomment when not working with mock anymore
-    async function getPokemonList() {
+    async function getPokemonList(displayOffset) {
       await fetch(
-        `https://pokeapi.co/api/v2/pokemon?limit=${qtyDisplay}&offset=${displayOffset}`
+        `${properties.API}/pokemon?limit=${qtyDisplay}&offset=${displayOffset}`
       )
         .then((response) => response.json())
         .then((data) => {
           setPokemonList(data.results);
-          setDisplayCount(data.count / qtyDisplay);
+          setPageAmount(Math.ceil(data.count / qtyDisplay));
         });
     }
-    getPokemonList();
-  }, [qtyDisplay, displayOffset]);
+    const displayOffset = page * qtyDisplay - qtyDisplay;
+    getPokemonList(displayOffset);
+  }, [qtyDisplay, page]);
 
   return (
-    <div>
-      {" "}
-      This is the pokemon list
+    <div className="pokemon-list-container">
       <div>
-        <Stack spacing={2}>
-          <Pagination
-            count={displayCount}
-            onChange={(_, value) => setDisplayOffset(value * qtyDisplay - 20)}
-          />
-        </Stack>
         <Box sx={{ minWidth: 120 }}>
           <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">Age</InputLabel>
+            <InputLabel id="demo-simple-select-label">Pokemon</InputLabel>
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
               value={qtyDisplay}
-              label="Age"
+              label="Pokemon per page"
               onChange={handleChange}
             >
               <MenuItem value={20}>20</MenuItem>
@@ -62,17 +62,23 @@ const PokemonList = () => {
           </FormControl>
         </Box>
       </div>
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "center",
-        }}
-      >
+      <div className="pokemon-list">
         {pokemonList.map((pokemon) => {
           return <PokemonImage name={pokemon.name} />;
         })}
       </div>
+      <Stack spacing={2}>
+        <Pagination
+          defaultPage={pageSelected}
+          count={pageAmount}
+          onChange={(_, value) => {
+            if (value) {
+              setPageSelected(value);
+              history.push(`/${value}`);
+            }
+          }}
+        />
+      </Stack>
     </div>
   );
 };
